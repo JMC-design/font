@@ -9,7 +9,7 @@ for such fine purposes as
           :for offset := 0 :then (+ offset (glyph:advance-width glyph)
           :for char :across string
           :for glyph := (font:glyph char font)
-          :for paths := (glyph:paths glyph :offset (cons offset-x offset-y))
+          :for paths := (glyph:paths glyph :offset (cons offset 0))
           :when paths :collect it
           :when (and kerning previous)
             :do (incf offset (glyph:kerning previous char)))))
