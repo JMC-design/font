@@ -110,7 +110,7 @@
 
 (defgeneric paths (object font &key offset &allow-other-keys))
 (defgeneric tables (font))
-(defgeneric raw-table (font))
+(defgeneric raw-table (table font))
 (defgeneric table (string font))
 (defgeneric index-table (index table font))
 (defgeneric metrics (font))
