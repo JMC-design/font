@@ -110,7 +110,7 @@
 (defgeneric kerning (glyph1 glyph2 &optional ppem))
 (defgeneric kerning-pairs (glyph))
 (defgeneric data (glyph));raw
-(defgeneric paths (glyph &key offset &allow-other-keys)) ;cl-vector paths
+(defgeneric paths (glyph &key ppem offset &allow-other-keys)) ;cl-vector paths
 (defgeneric raster (glyph &optional ppem))
 (defgeneric anchors (glyph  &optional ppem))
 

@@ -65,7 +65,8 @@
   (:method ((string string))(%open string (intern (string-upcase (pathname-type string)) :keyword))))
 (defgeneric %open (font type)
   (:method (font type) (error "No implementation for fonts of type ~a" type)))
-(defgeneric close (font))
+(defgeneric close (font)
+  (:method (font) "Font isn't really closed, but was it really ever open in the first place?"))
 
 (defgeneric name (font))
 (defgeneric family (font))
@@ -119,7 +120,7 @@
 ;;style? weight + italic oblique condensed extended underline overstrike, outline shadow
 
 (defmacro with-attributes (attributes font &body body)
-  "e.g. (font:with font(font:bla font))"
+  "e.g. (font:with-attributes (name family-name) font (list name family-name))"
   `(symbol-macrolet (,@ (loop :for at :in attributes
                               :collect `(,at (,(find-symbol (symbol-name at) (find-package 'font)) ,font))))
      ,@body))
@@ -138,14 +139,5 @@
   (reify? (line-gap font) font ppem))
 (defmethod glyph:em (glyph)
   (em (glyph:font glyph)))
-;; Thin 	100
-;; Extra-Light 	200
-;; Light 	300
-;; Normal 	400
-;; Medium 	500
-;; Demi-Bold 	600
-;; Bold 	700
-;; Heavy 	800
-;; Black 	900
-;; Nord 	
-;; Ultra 	
+
+
