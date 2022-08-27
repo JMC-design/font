@@ -117,13 +117,6 @@
 (defgeneric metrics (font))
 (defgeneric realize (font size dpi-x &optional dpi-y))
 
-;;style? weight + italic oblique condensed extended underline overstrike, outline shadow
-
-(defmacro with-attributes (attributes font &body body)
-  "e.g. (font:with-attributes (name family-name) font (list name family-name))"
-  `(symbol-macrolet (,@ (loop :for at :in attributes
-                              :collect `(,at (,(find-symbol (symbol-name at) (find-package 'font)) ,font))))
-     ,@body))
 
 ;;;; Methods
 
@@ -139,5 +132,30 @@
   (reify? (line-gap font) font ppem))
 (defmethod glyph:em (glyph)
   (em (glyph:font glyph)))
+(defmethod paths ((char character) font &key (offset (cons 0 0))ppem)
+  (glyph:paths (font:glyph char font):offset offset :ppem ppem ))
+
+(defmethod paths ((string string) font &key (offset (cons 0 0)) (kerning t) ppem)
+  "basic because we have access to nothing here. Override from FONTS."
+  (declare (ignore offset))
+  (let ((font (font:open font)))
+    (loop :for char :across string
+          :for previous := nil :then glyph
+          :for glyph := (font:glyph char font)
+          :for cursor := 0 :then (+ cursor (glyph:advance-width previous ppem))
+          :for paths := (glyph:paths glyph :offset (cons cursor 0) :ppem ppem)
+          :when paths :collect it
+            :when (and kerning previous)
+              :do (incf cursor (glyph:kerning previous glyph ppem)))))
 
 
+
+
+;;;useless
+;;style? weight + italic oblique condensed extended underline overstrike, outline shadow
+
+(defmacro with-attributes (attributes font &body body)
+  "e.g. (font:with-attributes (name family-name) font (list name family-name))"
+  `(symbol-macrolet (,@ (loop :for at :in attributes
+                              :collect `(,at (,(find-symbol (symbol-name at) (find-package 'font)) ,font))))
+     ,@body))

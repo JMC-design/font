@@ -39,7 +39,9 @@
            #:kerning-pairs
            #:data
            #:paths
-           #:raster))
+           #:raster
+
+           #:reify?))
 
 (in-package :glyph)
 (declaim (inline reify?))
