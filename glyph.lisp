@@ -46,7 +46,8 @@
 (in-package :glyph)
 (declaim (inline reify?))
 (defun reify? (value thing ppem)
-  (if ppem
+  (if (and ppem
+           (null (zerop value)))
       (* ppem (/ value (em thing)))
       value))
 

@@ -49,7 +49,8 @@
            #:index-table
                       
            #:paths
-           #:extents))
+           #:extents
+           #:character-sets))
 
 (in-package #:font)
 
@@ -132,21 +133,23 @@
   (reify? (line-gap font) font ppem))
 (defmethod glyph:em (glyph)
   (em (glyph:font glyph)))
-(defmethod paths ((char character) font &key (offset (cons 0 0))ppem)
-  (glyph:paths (font:glyph char font):offset offset :ppem ppem ))
+(defmethod paths ((char character) font &key (offset (cons 0 0))ppem inverted)
+  (glyph:paths (font:glyph char font):offset offset :ppem ppem :inverted inverted))
 
-(defmethod paths ((string string) font &key (offset (cons 0 0)) (kerning t) ppem)
+(defmethod paths ((string string) font &key (offset (cons 0 0)) (kerning t) ppem inverted)
   "basic because we have access to nothing here. Override from FONTS."
-  (declare (ignore offset))
-  (let ((font (font:open font)))
-    (loop :for char :across string
-          :for previous := nil :then glyph
-          :for glyph := (font:glyph char font)
-          :for cursor := 0 :then (+ cursor (glyph:advance-width previous ppem))
-          :for paths := (glyph:paths glyph :offset (cons cursor 0) :ppem ppem)
-          :when paths :collect it
-            :when (and kerning previous)
-              :do (incf cursor (glyph:kerning previous glyph ppem)))))
+  (let* ((font (font:open font))
+         (paths 
+           (destructuring-bind (x . y) offset
+             (loop :for char :across string
+                   :for previous := nil :then glyph
+                   :for glyph := (font:glyph char font)
+                   :for cursor := x :then (+ cursor (glyph:advance-width previous ppem))
+                   :for paths := (glyph:paths glyph :offset (cons cursor y) :ppem ppem :inverted inverted)
+                   :when paths :collect it
+                     :when (and kerning previous)
+                       :do (incf cursor (glyph:kerning previous glyph ppem))))))
+    paths))
 
 
 
