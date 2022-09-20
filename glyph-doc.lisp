@@ -90,7 +90,7 @@ In FreeType and other systems this is also called advanceY.")
              "Returns the glyph data as a cl-vectors path.")
             (raster
              .
-             "Returns the glyph in raster format, optionally at given pixels per em.")
+             "Returns three values, the glyph in raster format, optionally at given pixels per em, a cons of width height and a cons of offset x y.")
             (anchors
              .
              "Returns all the anchor points for a glyph.")))
